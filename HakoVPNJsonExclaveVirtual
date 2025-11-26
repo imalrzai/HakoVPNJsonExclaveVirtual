@@ -1,0 +1,245 @@
+{
+  "dns": {
+    "servers": [
+      {
+        "type": "https",
+        "tag": "RemoteDNS",
+        "server": "1.1.1.1",
+        "detour": "❇️Manual Select"
+      },
+      {
+        "type": "https",
+        "tag": "LocalDNS",
+        "server": "223.5.5.5"
+      }
+    ],
+    "rules": [
+      {
+        "rule_set": "Apple",
+        "server": "LocalDNS"
+      }
+    ],
+    "final": "RemoteDNS",
+    "strategy": "ipv4_only"
+  },
+  "log": {
+    "disabled": true,
+    "level": "error",
+    "output": "HakoNyan12.log",
+    "timestamp": true
+  },
+  "route": {
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "protocol": "dns",
+        "action": "hijack-dns"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
+        "protocol": "quic",
+        "action": "reject"
+      },
+      {
+        "action": "resolve",
+        "strategy": "prefer_ipv4"
+      },
+      {
+        "domain_suffix": [
+          "hemiao.app",
+          "pddpics.com",
+          "v1.boxcat.uk",
+          "local"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "ip_cidr": [
+          "1.12.12.12",
+          "223.5.5.5",
+          "110.41.156.114",
+          "47.106.228.226"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "outbound": "direct",
+        "rule_set": [
+          "Apple"
+        ]
+      }
+    ],
+    "rule_set": [
+      {
+        "format": "binary",
+        "tag": "Apple",
+        "type": "local",
+        "path": "\/data\/user\/0\/com.hakonyan.android\/files\/ruleset\/Apple_Classical.srs"
+      }
+    ],
+    "auto_detect_interface": true,
+    "default_domain_resolver": "LocalDNS"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "cache.db",
+      "store_fakeip": true,
+      "store_rdrc": true,
+      "rdrc_timeout": "168h0m0s"
+    }
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "mtu": 9000,
+      "address": "172.19.0.1\/30",
+      "auto_route": true,
+      "strict_route": true,
+      "platform": {
+        "http_proxy": {
+          "enabled": true,
+          "server": "127.0.0.1",
+          "server_port": 2334
+        }
+      }
+    },
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "127.0.0.1",
+      "listen_port": 2334
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "❇️Manual Select",
+      "type": "selector",
+      "outbounds": [
+        "🌐 Auto Select",
+        "🇺🇸US Los Angeles Exp [Free]",
+        "🇺🇸US Seattle 02 [Free]",
+        "🇭🇰CN Hongkong [Free]",
+        "🇬🇧UK London Exp [Free]"
+      ],
+      "default": "🌐 Auto Select"
+    },
+    {
+      "tag": "🌐 Auto Select",
+      "type": "urltest",
+      "outbounds": [
+        "🇺🇸US Los Angeles Exp [Free]",
+        "🇺🇸US Seattle 02 [Free]",
+        "🇭🇰CN Hongkong [Free]",
+        "🇬🇧UK London Exp [Free]"
+      ]
+    },
+    {
+      "type": "shadowtls",
+      "tag": "🇺🇸US Los Angeles Exp [Free]-shadow-tls",
+      "server": "sht-lax-sb.hkvlayer.com",
+      "server_port": 443,
+      "password": "ABcd1234",
+      "tls": {
+        "enabled": true,
+        "insecure": false,
+        "server_name": "aws.amazon.com"
+      },
+      "version": 3
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "🇺🇸US Los Angeles Exp [Free]",
+      "detour": "🇺🇸US Los Angeles Exp [Free]-shadow-tls",
+      "method": "2022-blake3-aes-128-gcm",
+      "password": "8JCsPssfgS8tiRwiMlhARg==",
+      "udp_over_tcp": {
+        "enabled": true,
+        "version": 2
+      },
+      "multiplex": {
+        "enabled": true,
+        "max_connections": 4,
+        "min_streams": 4
+      }
+    },
+    {
+      "type": "shadowtls",
+      "tag": "🇺🇸US Seattle 02 [Free]-shadow-tls",
+      "server": "104.194.206.232",
+      "server_port": 5443,
+      "password": "ABcd1234",
+      "tls": {
+        "enabled": true,
+        "insecure": false,
+        "server_name": "aws.amazon.com"
+      },
+      "version": 3
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "🇺🇸US Seattle 02 [Free]",
+      "detour": "🇺🇸US Seattle 02 [Free]-shadow-tls",
+      "method": "2022-blake3-aes-128-gcm",
+      "password": "8JCsPssfgS8tiRwiMlhARg==",
+      "udp_over_tcp": {
+        "enabled": true,
+        "version": 2
+      },
+      "multiplex": {
+        "enabled": true,
+        "max_connections": 4,
+        "min_streams": 4
+      }
+    },
+    {
+      "type": "shadowtls",
+      "tag": "🇭🇰CN Hongkong [Free]-shadow-tls",
+      "server": "hkt-hk-sb.hkvlayer.com",
+      "server_port": 443,
+      "password": "ABcd1234",
+      "tls": {
+        "enabled": true,
+        "insecure": false,
+        "server_name": "aws.amazon.com"
+      },
+      "version": 3
+    },
+    {
+      "type": "shadowsocks",
+      "tag": "🇭🇰CN Hongkong [Free]",
+      "detour": "🇭🇰CN Hongkong [Free]-shadow-tls",
+      "method": "2022-blake3-aes-128-gcm",
+      "password": "8JCsPssfgS8tiRwiMlhARg==",
+      "udp_over_tcp": {
+        "enabled": true,
+        "version": 2
+      },
+      "multiplex": {
+        "enabled": true,
+        "max_connections": 4,
+        "min_streams": 4
+      }
+    },
+    {
+      "server": "cldv-uk-hytwo.hkvlayer.com",
+      "server_port": 443,
+      "tag": "🇬🇧UK London Exp [Free]",
+      "type": "hysteria2",
+      "password": "c03c7e8e-ca84-11f0-b61e-f23c95bbf842",
+      "tls": {
+        "enabled": true
+      }
+    },
+    {
+      "tag": "direct",
+      "type": "direct"
+    }
+  ]
+}
